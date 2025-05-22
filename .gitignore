@@ -1,0 +1,30 @@
+# Entorno virtual
+.venv/
+env/
+venv/
+
+# Archivos de Python compilados
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Credenciales y configuraciones sensibles
+credentials.json
+
+# Archivos de logs
+*.log
+
+# Archivos temporales de sistemas operativos
+.DS_Store
+Thumbs.db
+
+# Configuración de herramientas
+*.vscode/
+.idea/
+
+# Archivos de FastAPI o Uvicorn temporales
+*.sqlite3
