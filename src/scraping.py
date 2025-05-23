@@ -48,7 +48,6 @@ def get_post_data(html: str, fecha_publicacion: Optional[str]) -> dict:
         time_to_read = time_tag.get_text(strip=True) if time_tag else None
         if time_to_read and "min" in time_to_read:
             parts = time_to_read.split("min")
-            # time_to_read = parts[0].strip() + " min " + parts[1].strip() if len(parts) > 1 else time_to_read
             time_to_read = parts[0].strip() + " min"
 
         return {
@@ -78,16 +77,16 @@ async def get_post_html(context, url: str) -> Optional[str]:
             await page.close()
             return html
         except Exception as e:
-            print(f"❌ Intento {intento + 1}/3 fallido al procesar {url}: {e}")
+            print(f"Intento {intento + 1}/3 fallido al procesar {url}: {e}")
             try:
                 await page.close()
             except:
-                pass  # Por si `page` nunca se creó correctamente
-            await asyncio.sleep(1)  # Espera 1 segundo antes de reintentar
+                pass  
+            await asyncio.sleep(1)
     return None
 
 
-async def get_all_posts_data(blog_url: str) -> List[dict]:
+async def get_all_posts_data(blog_url: str, url_to_lastmod: dict) -> List[dict]:
     posts_data = []
 
     async with async_playwright() as p:
@@ -104,11 +103,12 @@ async def get_all_posts_data(blog_url: str) -> List[dict]:
             tasks.append(get_post_html(context, url))
 
         html_results = await asyncio.gather(*tasks)
-        print(f"🔍 Procesando {len(html_results)} posts...")
+        print(f"Procesando {len(html_results)} posts...")
 
         for html, url in zip(html_results, urls):
             if html:
-                post_data = get_post_data(html, fecha_publicacion=None)
+                fecha = url_to_lastmod.get(url)
+                post_data = get_post_data(html, fecha_publicacion=fecha)
                 post_data["url"] = url
                 posts_data.append(post_data)
             else:
@@ -122,7 +122,7 @@ async def get_all_posts_data(blog_url: str) -> List[dict]:
                 }
                 posts_data.append(unknown_post_data)
 
-        print(f"✅ Se procesaron {len(posts_data)} posts.")
+        print(f"Se procesaron {len(posts_data)} posts.")
 
         await browser.close()
 
