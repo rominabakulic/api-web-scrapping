@@ -71,7 +71,7 @@ async def get_post_html(context, url: str) -> Optional[str]:
     for intento in range(3):
         try:
             page = await context.new_page()
-            await page.goto(url, wait_until="domcontentloaded", timeout=20000*(intento + 1))
+            await page.goto(url, wait_until="domcontentloaded", timeout=30000*(intento + 1))
             await page.wait_for_timeout(1500)
             html = await page.content()
             await page.close()
@@ -81,12 +81,12 @@ async def get_post_html(context, url: str) -> Optional[str]:
             try:
                 await page.close()
             except:
-                pass  # Por si `page` nunca se creó correctamente
-            await asyncio.sleep(1)  # Espera 1 segundo antes de reintentar
+                pass  
+            await asyncio.sleep(1)
     return None
 
 
-async def get_all_posts_data(blog_url: str) -> List[dict]:
+async def get_all_posts_data(blog_url: str, url_to_lastmod: dict) -> List[dict]:
     posts_data = []
 
     async with async_playwright() as p:
@@ -107,7 +107,8 @@ async def get_all_posts_data(blog_url: str) -> List[dict]:
 
         for html, url in zip(html_results, urls):
             if html:
-                post_data = get_post_data(html, fecha_publicacion=None)
+                fecha = url_to_lastmod.get(url, "N/D")
+                post_data = get_post_data(html, fecha_publicacion=fecha)
                 post_data["url"] = url
                 posts_data.append(post_data)
             else:
