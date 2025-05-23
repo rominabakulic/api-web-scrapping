@@ -107,7 +107,7 @@ async def get_all_posts_data(blog_url: str, url_to_lastmod: dict) -> List[dict]:
 
         for html, url in zip(html_results, urls):
             if html:
-                fecha = url_to_lastmod.get(url)
+                fecha = url_to_lastmod.get(url, "N/D")
                 post_data = get_post_data(html, fecha_publicacion=fecha)
                 post_data["url"] = url
                 posts_data.append(post_data)

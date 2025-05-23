@@ -47,6 +47,12 @@ async def scrape(request: ScrapeRequest):
             lastmod = url_element.find("ns:lastmod", ns)
             if loc is not None and lastmod is not None:
                 url_to_lastmod[loc.text] = lastmod.text
+        
+        if not any(u.startswith(blog_url) for u in url_to_lastmod):
+            return {
+                "error": f"La categoría '{categoria}' no se encontró en el sitemap",
+                "blog_url": blog_url
+            }
 
      
         posts_data = await get_all_posts_data(blog_url, url_to_lastmod)
