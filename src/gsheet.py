@@ -22,7 +22,6 @@ def guardar_en_gsheet(posts_data: List[dict]) -> str:
 
     ws.clear()
 
-    # Encabezados
     rows = [["Titular", "Categoría", "Autor",
                 "Tiempo de lectura", "Fecha de modificación", "URL"]]
 
