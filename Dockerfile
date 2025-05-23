@@ -1,23 +1,19 @@
-# Dockerfile
-FROM python:3.10-slim
+# ───────────────────────────────────────────────────────────────
+# Imagen base con Python 3.10, Playwright y Chromium instalados
+# ───────────────────────────────────────────────────────────────
+FROM mcr.microsoft.com/playwright/python:v1.43.1-jammy
 
-# Instalar dependencias del sistema
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
-# Instalar playwright + dependencias de Chromium
-RUN pip install playwright && playwright install chromium
-
-# Crear y moverse al directorio de la app
+# Crea directorio de trabajo
 WORKDIR /app
 
-# Copiar archivos
+# Copia el resto del proyecto
 COPY . .
 
-# Instalar dependencias de Python
+# Instala dependencias de Python de tu proyecto
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Puerto expuesto por uvicorn
+# Puerto obligatorio para Cloud Run
 EXPOSE 8080
 
-# Comando para ejecutar FastAPI en Cloud Run
+# Lanza la API FastAPI
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
