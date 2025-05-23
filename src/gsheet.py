@@ -1,8 +1,6 @@
 import gspread
+import google.auth
 from typing import List
-import google.auth            #
-
-
 
 def guardar_en_gsheet(posts_data: List[dict]) -> str:
 
@@ -22,22 +20,20 @@ def guardar_en_gsheet(posts_data: List[dict]) -> str:
 
     ws.clear()
 
-    # Encabezados
-    rows = [["Titular", "Categoría", "Autor",
-                "Tiempo de lectura", "Fecha de modificación", "URL"]]
+     # Encabezados
+    rows = [["Titular", "Categoría", "Autor", "Tiempo de lectura", "URL"]]
 
     # Agregar datos
     for post in posts_data:
-            rows.append([
-                post.get("titular"),
-                post.get("categoria"),
-                post.get("autor"),
-                post.get("tiempo_lectura"),
-                post.get("fecha_publicacion"),
-                post.get("url"),
-            ])
+        rows.append([
+            post.get("titular"),
+            post.get("categoria"),
+            post.get("autor"),
+            post.get("tiempo_lectura"),
+            post.get("url"),
+        ])
 
     # Cargar todos los datos en una sola llamada
-    ws.update(f"A1:F{len(rows)}", rows)
+    ws.update(f"A1:E{len(rows)}", rows)
 
     return f"https://docs.google.com/spreadsheets/d/{spreadsheet_id}/edit"
